@@ -2,10 +2,8 @@
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
-// console.log(galleryItems);
-
 function createLinks(array) {
-    return array.reduce((acc, picture) => acc + `<a class="gallery__link" href="">
+    return array.reduce((acc, picture) => acc + `<a class="gallery__link" href="${picture.original}">
     <img
       class="gallery__image"
       src="${picture.preview}"
@@ -19,16 +17,6 @@ const collection = createLinks(galleryItems);
 
 const gallery = document.querySelector(".gallery");
 gallery.insertAdjacentHTML("afterbegin", collection);
-
-
-// function onShowGallery(event) {
-//     const originalPicture = event.target.dataset.source;
-    
-// }
-
-// gallery.addEventListener("click", onShowGallery);
-
-
 
 
 const lightbox = document.createElement('div');
@@ -54,3 +42,4 @@ lightbox.addEventListener('click', e => {
 
     lightbox.classList.remove('active')
 });
+
