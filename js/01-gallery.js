@@ -2,44 +2,58 @@
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
-function createLinks(array) {
-    return array.reduce((acc, picture) => acc + `<a class="gallery__link" href="${picture.original}">
-    <img
-      class="gallery__image"
-      src="${picture.preview}"
-      data-source="${picture.original}"
-      alt="${picture.description}"
-    />
-  </a>` , '');
+const galleryContainer = document.querySelector('.gallery');
+
+const galleryItemsMarkup = createGallery(galleryItems);
+
+galleryContainer.insertAdjacentHTML("beforeend", galleryItemsMarkup);
+
+galleryContainer.addEventListener("click", onGalleryContainerClick);
+
+function createGallery(galleryItems) {
+    return galleryItems.map(galleryItem => {
+        return `
+        <div class="gallery__item">
+            <a class="gallery__link" href="${galleryItem.original}">
+                <img
+                class="gallery__image"
+                src="${galleryItem.preview}"
+                data-source="${galleryItem.original}"
+                alt='${galleryItem.description}'
+            />
+            </a>
+        </div>
+    `;
+    }).join("");
+}
+ 
+function onGalleryContainerClick(event) {
+    if (!event.target.classList.contains('gallery__image')) {
+        return;
+    }
+    event.preventDefault();
+    const urlOfOriginalImage = event.target.dataset.source;
+
+    createModalWithOriginalImage(urlOfOriginalImage);
 }
 
-const collection = createLinks(galleryItems);
+function createModalWithOriginalImage(url) {
 
-const gallery = document.querySelector(".gallery");
-gallery.insertAdjacentHTML("afterbegin", collection);
+    const instance = basicLightbox.create(`
+    <div class="modal">
+        <img src="${url}" width="1280">
+    </div>
+    `, {
+        onShow: (instance) => {
+            document.addEventListener("keydown", function onEscape(e) {
 
-
-const lightbox = document.createElement('div');
-lightbox.id = 'lightbox';
-document.body.appendChild(lightbox);
-
-const images = document.querySelectorAll('.gallery__image');
-images.forEach(image => {
-    image.addEventListener('click', e => {
-         e.preventDefault();
-        lightbox.classList.add('active')
-        const img = document.createElement('img')
-        img.src = image.dataset.source
-        while (lightbox.firstChild) {
-          lightbox.removeChild(lightbox.firstChild)
+                if (e.code === "Escape") {
+                    instance.close();
+                    document.removeEventListener("keydown", onEscape);
+                    }
+            })
         }
-        lightbox.appendChild(img)
-    });
-});
-
-lightbox.addEventListener('click', e => {
-    if (e.target !== e.currentTarget) return
-
-    lightbox.classList.remove('active')
-});
-
+    })
+    
+    instance.show();
+}

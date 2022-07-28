@@ -14,4 +14,7 @@ gallery.insertAdjacentHTML("afterbegin", collection);
 
 
 let ligthbox = new SimpleLightbox('.gallery a', {captionDelay: 250, captionsData: "alt", showCounter: false});
-gallery.on('show.simplelightbox');
+ligthbox.on('show.simplelightbox');
+
+
+
